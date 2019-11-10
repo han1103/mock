@@ -1,8 +1,9 @@
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 /*
- * https://leetcode.com/interview/2/
+ * https://leetcode.com/problems/01-matrix
 */
 public class NearestZero {
 
@@ -10,9 +11,10 @@ public class NearestZero {
 		// TODO Auto-generated method stub
 		//int[][] matrix = new int[][] { {0,0,0}, {0,1,0}, {0,0,0} };		
 		//int[][] matrix = new int[][] { { 0, 0, 0 }, { 0, 1, 0 }, { 1, 1, 1 } };
-		int[][] matrix = new int[][] {{0},{0},{0},{0},{0}};
-		//int[][] matrix = new int[][] {{0,1,0,1,1},{1,1,0,0,1},{0,0,0,1,0},{1,0,1,1,1},{1,0,0,0,1}};		
-		int[][] result = new NearestZero().updateMatrix(matrix);
+		//int[][] matrix = new int[][] {{0},{0},{0},{0},{0}};
+		int[][] matrix = new int[][] {{0,1,0,1,1},{1,1,0,0,1},{0,0,0,1,0},{1,0,1,1,1},{1,0,0,0,1}};		
+		//int[][] result = new NearestZero().updateMatrix(matrix);
+		int[][] result = new NearestZero().updateMatrixApproach2(matrix);
 
 		for (int[] row : result) {
 			for (int num : row)
@@ -101,5 +103,68 @@ public class NearestZero {
 			}
 
 		return result;
+	}
+	
+	public int[][] updateMatrixApproach2(int[][] matrix) {
+		if (matrix == null)
+			return null;
+		dimX = matrix.length;
+		if (dimX == 0)
+			return matrix;
+		if(matrix[0]==null)
+			return matrix;
+		dimY = matrix[0].length;
+
+		int[][] result = new int[dimX][];
+		for (int i = 0; i < dimX; i++) {
+			result[i] = new int[dimY];
+			for (int j = 0; j < dimY; j++) {
+				if(matrix[i][j]==0)
+					result[i][j] = 0;
+				else
+					result[i][j] = Integer.MAX_VALUE;
+			}
+		}
+		
+		Stack<Coordinate> stack = new Stack<NearestZero.Coordinate>();
+		for(int i = 0; i < dimX; i++)
+			for (int j = 0; j < dimY; j++)
+				if(matrix[i][j]==0)
+					stack.add(new Coordinate(i, j));
+		
+		while(!stack.isEmpty()) {
+			Coordinate node = stack.pop();
+			int x = node.x;
+			int y = node.y;
+			if(x>0) {
+				if(result[x-1][y] > result[x][y]+1) {
+					result[x-1][y] = result[x][y]+1;
+					stack.push(new Coordinate(x-1, y));
+				}					
+			}
+			if(x<dimX-1) {
+				if(result[x+1][y] > result[x][y]+1) {
+					result[x+1][y] = result[x][y]+1;
+					stack.push(new Coordinate(x+1, y));
+				}					
+			}
+			if(y>0) {
+				if(result[x][y-1] > result[x][y]+1) {
+					result[x][y-1] = result[x][y]+1;
+					stack.push(new Coordinate(x, y-1));
+				}					
+			}
+			if(y<dimY-1) {
+				if(result[x][y+1] > result[x][y]+1) {
+					result[x][y+1] = result[x][y]+1;
+					stack.push(new Coordinate(x, y+1));
+				}					
+			}
+			
+		}
+		
+		return result;
+
+		
 	}
 }
